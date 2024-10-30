@@ -1,0 +1,22 @@
+<Level>
+	<GameObject>
+		<SpriteComponent texture="hero" />
+		<BodyComponent x="100" y="200" />
+		<GravityComponent />
+		<ControllerComponent />
+	</GameObject>
+	<GameObject>
+		<SpriteComponent texture="enemy" />
+		<BodyComponent x="300" y="400" />
+		<SlideComponentX speed="1" leftBound="100" rightBound="200" />
+	</GameObject>
+	<GameObject>
+		<SpriteComponent texture="enemy" />
+		<BodyComponent x="500" y="200" />
+		<SlideComponentY speed="1" topBound="100" bottomBound="200" />
+	</GameObject>
+	<GameObject>
+		<SpriteComponent texture="asteroid" />
+		<AsteroidComponent spawnInterval="2.0" speed="5.0" />
+	</GameObject>
+</Level>
