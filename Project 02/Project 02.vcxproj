@@ -148,12 +148,13 @@
     <ClCompile Include="Textures.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\Downloads\merchant\merchant\idle.png" />
-    <Image Include="cat.png" />
-    <Image Include="squirrel.png" />
+    <Xml Include="level.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="level.xml" />
+    <Image Include="6.png" />
+    <Image Include="Ice.png" />
+    <Image Include="Lava.png" />
+    <Image Include="Terran.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

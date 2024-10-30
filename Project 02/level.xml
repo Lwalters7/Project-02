@@ -1,6 +1,6 @@
 <Level>
 	<GameObject>
-		<SpriteComponent texture="hero" width="128" height="64" />
+		<SpriteComponent texture="hero" width="64" height="32" />
 		<BodyComponent x="100" y="200" />
 		<GravityComponent />
 		<ControllerComponent />

@@ -70,19 +70,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="squirrel.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="cat.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Downloads\merchant\merchant\idle.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <Xml Include="level.xml">
       <Filter>Resource Files</Filter>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Terran.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="6.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Lava.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Ice.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

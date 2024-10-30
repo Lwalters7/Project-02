@@ -7,7 +7,7 @@
 class ControllerComponent : public Component {
 public:
     ControllerComponent(GameObject& parent)
-        : Component(parent), moveSpeed(5.0), jumpForce(10.0), canJump(true) {}
+        : Component(parent), moveSpeed(3.0), jumpForce(3.0), canJump(true) {}
 
     ControllerComponent(GameObject& parent, double moveSpeed, double jumpForce)
         : Component(parent), moveSpeed(moveSpeed), jumpForce(jumpForce), canJump(true) {}

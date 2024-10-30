@@ -30,7 +30,7 @@ public:
             asteroid->get<BodyComponent>()->x() -= asteroidSpeed;
 
             // Remove asteroid if it goes off the left side of the screen
-            if (asteroid->get<BodyComponent>()->x() < -64) {
+            if (asteroid->get<BodyComponent>()->x() < -128) {
                 it = asteroids.erase(it);
             }
             else {

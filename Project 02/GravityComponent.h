@@ -5,7 +5,7 @@
 class GravityComponent : public Component {
 public:
     GravityComponent(GameObject& parent)
-        : Component(parent), gravity(1.0), terminalVelocity(10.0) {}
+        : Component(parent), gravity(0.1), terminalVelocity(10.0) {}
 
     void update() override {
         auto body = parent().get<BodyComponent>();
