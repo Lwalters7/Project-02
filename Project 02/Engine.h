@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 
-// Forward declaration for GameObject to avoid a full include
 class GameObject;
 
 class Engine {
@@ -14,7 +13,7 @@ public:
 
     static bool init(const char* title, int width, int height);
     static void handleEvents();
-    static void loadLevel(const std::string& fileName);  // Declaration only
+    static void loadLevel(const std::string& fileName);
     static void update();
     static void render();
     static void clean();
@@ -23,7 +22,7 @@ public:
     static void run();
     static SDL_Renderer* getRenderer();
 
-    static double deltaTime();  // Add this method to get the delta time
+    static double deltaTime();
 
 
 private:

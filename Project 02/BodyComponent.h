@@ -26,12 +26,10 @@ public:
 
         // Calculate the angle based on vertical velocity with different multipliers
         if (_velocityY < 0.0) {
-            // Moving up: apply a larger multiplier for faster tilt
-            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.5;  // Adjust upward multiplier
+            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.5;
         }
         else if (_velocityY > 0.0) {
-            // Moving down: apply a smaller multiplier for slower tilt
-            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.2;  // Adjust downward multiplier
+            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.2;
         }
 
         // Invert the angle if facing left
@@ -46,7 +44,7 @@ public:
     // Update position based on current velocity and angle
     void update() override {
         _y += _velocityY;
-        updateAngle();  // Update angle based on horizontal direction only
+        updateAngle();
     }
 
     void draw() override {}
@@ -55,5 +53,5 @@ private:
     double _x, _y;            // Position coordinates
     double _velocityY;  // Velocity in x and y directions
     double _angle;            // Angle to face left or right
-    bool facingLeft;
+    bool facingLeft;     //self explanatory
 };

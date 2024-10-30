@@ -24,8 +24,8 @@ public:
             SDL_Rect dst;
             dst.x = static_cast<int>(body->x());
             dst.y = static_cast<int>(body->y());
-            dst.w = width;  // Set the desired width
-            dst.h = height;  // Set the desired height
+            dst.w = width;  
+            dst.h = height;
 
             // Determine the flip state based on facing direction
             SDL_RendererFlip flip = body->isFacingLeft() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;

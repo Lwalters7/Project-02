@@ -148,6 +148,7 @@
     <ClCompile Include="Textures.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\merchant\merchant\idle.png" />
     <Image Include="cat.png" />
     <Image Include="squirrel.png" />
   </ItemGroup>

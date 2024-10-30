@@ -86,8 +86,10 @@ void Engine::loadLevel(const std::string& fileName) {
 
             if (componentName == "SpriteComponent") {
                 const char* texture = compElem->Attribute("texture");
+                int width = compElem->IntAttribute("width", 64);
+                int height = compElem->IntAttribute("height", 64);
                 if (texture) {
-                    gameObject->add<SpriteComponent>(texture);
+                    gameObject->add<SpriteComponent>(texture,width,height);
                 }
             }
             else if (componentName == "BodyComponent") {
@@ -98,7 +100,8 @@ void Engine::loadLevel(const std::string& fileName) {
             else if (componentName == "AsteroidComponent") {
                 double spawnInterval = compElem->DoubleAttribute("spawnInterval", 2.0);
                 double speed = compElem->DoubleAttribute("speed", 5.0);
-                gameObject->add<AsteroidComponent>(spawnInterval, speed);
+                double rotationSpeed = compElem->DoubleAttribute("rotationSpeed", 5.0);
+                gameObject->add<AsteroidComponent>(spawnInterval, speed, rotationSpeed);
             }
             else if (componentName == "GravityComponent") {
                 gameObject->add<GravityComponent>();
@@ -149,7 +152,6 @@ void Engine::render() {
     SDL_RenderPresent(renderer);
 }
 
-// Clean up resources
 void Engine::clean() {
     if (renderer) {
         SDL_DestroyRenderer(renderer);
@@ -160,17 +162,14 @@ void Engine::clean() {
     SDL_Quit();
 }
 
-// Check if the engine is still running
 bool Engine::running() {
     return isRunning;
 }
 
-// Add a GameObject to the engine
 void Engine::addGameObject(std::unique_ptr<GameObject> gameObject) {
     gameObjects.push_back(std::move(gameObject));
 }
 
-// Run the main game loop
 void Engine::run() {
     _lastFrameTime = SDL_GetTicks();  // Initialize the first frame time
 
@@ -198,7 +197,6 @@ void Engine::run() {
     clean();
 }
 
-// Get the SDL renderer
 SDL_Renderer* Engine::getRenderer() {
     return renderer;
 }

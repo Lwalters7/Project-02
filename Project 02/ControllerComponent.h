@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "BodyComponent.h"
-#include "Input.h"  // Include the Input class for key state checks
+#include "Input.h"
 #include <SDL2/SDL.h>
 
 class ControllerComponent : public Component {
@@ -28,17 +28,16 @@ public:
 
             // Jump by setting initial upward velocity
             if (Input::isKeyDown(SDLK_SPACE) && canJump) {
-                body->setVelocityY(-jumpForce);  // Apply upward velocity for jump
-                canJump = false;                 // Prevents continuous jumps while holding space
+                body->setVelocityY(-jumpForce);
+                canJump = false;
             }
             else if (!Input::isKeyDown(SDLK_SPACE)) {
-                canJump = true;                  // Reset jump ability on release
+                canJump = true;
             }
         }
     }
 
     void draw() override {
-        // ControllerComponent does not need to draw anything
     }
 
 private:

@@ -11,9 +11,11 @@ int main(int argc, char* argv[]) {
     SDL_Renderer* renderer = Engine::getRenderer();  // Assuming Engine provides a getRenderer method
 
     // Load textures into the texture manager
-    Textures::load("hero", "squirrel.png", renderer);
+    Textures::load("hero", "6.png", renderer);
     Textures::load("enemy", "cat.png", renderer);
-    Textures::load("asteroid", "squirrel.png", renderer);
+    Textures::load("asteroid", "Baren.png", renderer);
+    Textures::load("planet1", "Terran.png", renderer);
+    Textures::load("planet2", "Lava.png", renderer);
 
   //  auto asteroidManager = std::make_unique<GameObject>();
   //  asteroidManager->add<AsteroidComponent>(2.0, 5.0);

@@ -31,7 +31,6 @@ public:
     }
 
     void draw() override {
-        // GravityComponent does not need to draw anything
     }
 
 private:

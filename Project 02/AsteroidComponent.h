@@ -5,13 +5,13 @@
 #include "BodyComponent.h"
 #include "SpriteComponent.h"
 #include <SDL2/SDL.h>
-#include <cstdlib>  // For rand()
-#include <ctime>    // For time()
+#include <cstdlib>
+#include <ctime>
 
 class AsteroidComponent : public Component {
 public:
-    AsteroidComponent(GameObject& parent, double spawnInterval, double asteroidSpeed)
-        : Component(parent), spawnInterval(spawnInterval), asteroidSpeed(asteroidSpeed), timeSinceLastSpawn(0.0) {
+    AsteroidComponent(GameObject& parent, double spawnInterval, double asteroidSpeed, double rotationSpeed)
+        : Component(parent), spawnInterval(spawnInterval), asteroidSpeed(asteroidSpeed), rotationSpeed(rotationSpeed), timeSinceLastSpawn(0.0) {
         std::srand(static_cast<unsigned>(std::time(nullptr)));  // Seed random number generator
     }
 
@@ -30,7 +30,7 @@ public:
             asteroid->get<BodyComponent>()->x() -= asteroidSpeed;
 
             // Remove asteroid if it goes off the left side of the screen
-            if (asteroid->get<BodyComponent>()->x() < -64) {  // Assuming 64 is the width of the asteroid
+            if (asteroid->get<BodyComponent>()->x() < -64) {
                 it = asteroids.erase(it);
             }
             else {
@@ -40,7 +40,6 @@ public:
     }
 
     void draw() override {
-        // Draw each asteroid (handled by its own SpriteComponent)
         for (auto& asteroid : asteroids) {
             asteroid->draw();
         }
@@ -53,8 +52,7 @@ private:
 
         asteroid->add<BodyComponent>(Engine::width, yPos);
 
-        // Specify custom dimensions for larger asteroids, e.g., 128x128
-        asteroid->add<SpriteComponent>("asteroid", 128, 128);  // Adjust dimensions as desired
+        asteroid->add<SpriteComponent>("asteroid", 128, 128);
 
         asteroids.push_back(std::move(asteroid));
     }
@@ -64,4 +62,5 @@ private:
     double asteroidSpeed;       // Speed of asteroid movement
     double timeSinceLastSpawn;  // Time since the last asteroid spawn
     std::vector<std::unique_ptr<GameObject>> asteroids;  // Active asteroids
+    double rotationSpeed;
 };
