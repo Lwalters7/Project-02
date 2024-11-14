@@ -17,12 +17,9 @@ int main(int argc, char* argv[]) {
     Textures::load("planet1", "Terran.png", renderer);
     Textures::load("planet2", "Lava.png", renderer);
 
-  //  auto asteroidManager = std::make_unique<GameObject>();
-  //  asteroidManager->add<AsteroidComponent>(2.0, 5.0);
 
     // Load level from XML file
     Engine::loadLevel("level.xml");
-  //  Engine::addGameObject(std::move(asteroidManager));
 
     // Run the engine
     Engine::run();

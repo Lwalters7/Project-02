@@ -140,6 +140,7 @@
     <ClInclude Include="SpawnAndMoveComponent.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="Textures.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />

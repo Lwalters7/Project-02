@@ -10,6 +10,7 @@
 #include "AsteroidComponent.h"
 #include "tinyxml2.h"
 #include "Input.h"
+#include "View.h"
 
 using namespace tinyxml2;
 
@@ -49,9 +50,13 @@ bool Engine::init(const char* title, int width, int height) {
         return false;
     }
 
+    // Initialize the view with the screen dimensions
+    View::getInstance().setScreenSize(width, height);
+
     isRunning = true;
     return true;
 }
+
 
 // Event handling (e.g., for quitting the game)
 void Engine::handleEvents() {
@@ -137,6 +142,15 @@ void Engine::loadLevel(const std::string& fileName) {
 void Engine::update() {
     for (auto& gameObject : gameObjects) {
         gameObject->update();
+    }
+
+    // Example: Make the camera follow the first GameObject (assumed to be the player)
+    if (!gameObjects.empty()) {
+        auto& player = gameObjects.front();
+        auto body = player->get<BodyComponent>();
+        if (body) {
+            View::getInstance().setPosition(body->x(), body->y());
+        }
     }
 }
 
