@@ -26,10 +26,10 @@ public:
 
         // Calculate the angle based on vertical velocity with different multipliers
         if (_velocityY < 0.0) {
-            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.5;
+            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.4;
         }
         else if (_velocityY > 0.0) {
-            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.8;
+            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.5;
         }
 
         // Invert the angle if facing left

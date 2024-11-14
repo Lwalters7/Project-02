@@ -14,7 +14,6 @@
 
 using namespace tinyxml2;
 
-// Define static members
 bool Engine::isRunning = false;
 SDL_Window* Engine::window = nullptr;
 SDL_Renderer* Engine::renderer = nullptr;
@@ -29,7 +28,6 @@ double Engine::deltaTime() {
     return _deltaTime;
 }
 
-// Initialize the engine and create a window and renderer
 bool Engine::init(const char* title, int width, int height) {
     Engine::width = width;
     Engine::height = height;
@@ -50,26 +48,22 @@ bool Engine::init(const char* title, int width, int height) {
         return false;
     }
 
-    // Initialize the view with the screen dimensions
     View::getInstance().setScreenSize(width, height);
-
     isRunning = true;
+    _lastFrameTime = SDL_GetTicks(); // Initialize last frame time
     return true;
 }
 
-
-// Event handling (e.g., for quitting the game)
 void Engine::handleEvents() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             isRunning = false;
         }
-        Input::processEvent(event);  // Update input states
+        Input::processEvent(event);
     }
 }
 
-// Load game objects from an XML file
 void Engine::loadLevel(const std::string& fileName) {
     XMLDocument doc;
     if (doc.LoadFile(fileName.c_str()) != XML_SUCCESS) {
@@ -94,7 +88,7 @@ void Engine::loadLevel(const std::string& fileName) {
                 int width = compElem->IntAttribute("width", 64);
                 int height = compElem->IntAttribute("height", 64);
                 if (texture) {
-                    gameObject->add<SpriteComponent>(texture,width,height);
+                    gameObject->add<SpriteComponent>(texture, width, height);
                 }
             }
             else if (componentName == "BodyComponent") {
@@ -138,13 +132,11 @@ void Engine::loadLevel(const std::string& fileName) {
     }
 }
 
-// Update all game objects
 void Engine::update() {
     for (auto& gameObject : gameObjects) {
         gameObject->update();
     }
 
-    // Example: Make the camera follow the first GameObject (assumed to be the player)
     if (!gameObjects.empty()) {
         auto& player = gameObjects.front();
         auto body = player->get<BodyComponent>();
@@ -154,7 +146,6 @@ void Engine::update() {
     }
 }
 
-// Render all game objects
 void Engine::render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
@@ -184,27 +175,25 @@ void Engine::addGameObject(std::unique_ptr<GameObject> gameObject) {
     gameObjects.push_back(std::move(gameObject));
 }
 
+// Main game loop
 void Engine::run() {
-    _lastFrameTime = SDL_GetTicks();  // Initialize the first frame time
-
     while (isRunning) {
         Uint32 currentFrameTime = SDL_GetTicks();
-        _deltaTime = (currentFrameTime - _lastFrameTime) / 1000.0;  // Convert to seconds
+        _deltaTime = (currentFrameTime - _lastFrameTime) / 1000.0;
         _lastFrameTime = currentFrameTime;
 
         handleEvents();
         update();
         render();
-        SDL_Delay(16);  // 60 FPS (approximately)
 
-        // Remove destroyed objects
-        for (auto it = gameObjects.begin(); it != gameObjects.end();) {
-            if ((*it)->isDestroyed()) {
-                it = gameObjects.erase(it);
-            }
-            else {
-                ++it;
-            }
+        gameObjects.erase(
+            std::remove_if(gameObjects.begin(), gameObjects.end(),
+                [](const std::unique_ptr<GameObject>& obj) { return obj->isDestroyed(); }),
+            gameObjects.end());
+
+        int frameDuration = SDL_GetTicks() - currentFrameTime;
+        if (frameDuration < 16) {
+            SDL_Delay(16 - frameDuration);
         }
     }
 

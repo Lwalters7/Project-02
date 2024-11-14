@@ -1,31 +1,28 @@
 #pragma once
 #include "Component.h"
 #include "BodyComponent.h"
+#include "Engine.h"
 
 class GravityComponent : public Component {
 public:
     GravityComponent(GameObject& parent)
-        : Component(parent), gravity(0.1), terminalVelocity(10.0) {}
+        : Component(parent), gravity(8.0), terminalVelocity(600.0) {}
 
     void update() override {
         auto body = parent().get<BodyComponent>();
 
         if (body) {
-            // Apply gravity to vertical velocity
-            body->velocityY() += gravity;
+            body->velocityY() += gravity * Engine::deltaTime();
 
-            // Cap at terminal velocity
             if (body->velocityY() > terminalVelocity) {
                 body->velocityY() = terminalVelocity;
             }
 
-            // Update the y-position based on velocity
-            body->y() += body->velocityY();
+            body->y() += body->velocityY() * Engine::deltaTime();
 
-            // Check if object has reached the ground
             if (body->y() >= groundLevel) {
-                body->y() = groundLevel;           // Snap to ground level
-                body->setVelocityY(0.0);           // Reset velocity on ground contact
+                body->y() = groundLevel;           
+                body->setVelocityY(0.0);           
             }
         }
     }
@@ -34,7 +31,7 @@ public:
     }
 
 private:
-    double gravity;
-    double terminalVelocity;
-    const double groundLevel = 500.0; // Adjust based on screen height
+    double gravity;        
+    double terminalVelocity; 
+    const double groundLevel = 500.0; 
 };

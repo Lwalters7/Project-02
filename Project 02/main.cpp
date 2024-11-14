@@ -3,14 +3,12 @@
 #include "Textures.h"
 
 int main(int argc, char* argv[]) {
-    // Initialize the engine
-    if (!Engine::init("SDL2 Game Engine", 800, 600)) {
+    if (!Engine::init("SDL2 Game Engine", 1000, 800)) {
         return -1;
     }
 
-    SDL_Renderer* renderer = Engine::getRenderer();  // Assuming Engine provides a getRenderer method
+    SDL_Renderer* renderer = Engine::getRenderer();  
 
-    // Load textures into the texture manager
     Textures::load("hero", "6.png", renderer);
     Textures::load("enemy", "cat.png", renderer);
     Textures::load("asteroid", "Baren.png", renderer);
@@ -18,10 +16,8 @@ int main(int argc, char* argv[]) {
     Textures::load("planet2", "Lava.png", renderer);
 
 
-    // Load level from XML file
     Engine::loadLevel("level.xml");
 
-    // Run the engine
     Engine::run();
 
     return 0;

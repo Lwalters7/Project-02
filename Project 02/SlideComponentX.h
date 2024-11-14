@@ -1,26 +1,30 @@
 #pragma once
 #include "Component.h"
 #include "BodyComponent.h"
+#include "Engine.h"
 
 class SlideComponentX : public Component {
 public:
     SlideComponentX(GameObject& parent) : Component(parent) {
-        speed = .1;
+        speed = 10.0;
         leftx = 0;
         rightx = Engine::width;
     }
 
-    SlideComponentX(GameObject& parent, double speed) 
-        : Component(parent), speed(speed){
+    SlideComponentX(GameObject& parent, double speed)
+        : Component(parent), speed(speed) {
         leftx = 0;
         rightx = Engine::width;
     }
-    SlideComponentX(GameObject& parent, double speed, int leftx, int rightx) 
-        : Component(parent), speed(speed), leftx(leftx), rightx(rightx){}
-    
+
+    SlideComponentX(GameObject& parent, double speed, int leftx, int rightx)
+        : Component(parent), speed(speed), leftx(leftx), rightx(rightx) {}
+
     void update() override {
         auto body = parent().get<BodyComponent>();
-        //body->x()+=100*Engine::deltatime;
+
+        if (!body) return;
+
         if (body->x() > rightx) {
             goingRight = false;
             body->x() = rightx;
@@ -30,20 +34,16 @@ public:
             body->x() = leftx;
         }
 
-
+        double movement = speed * Engine::deltaTime();
         if (goingRight) {
-            body->x() += speed;
+            body->x() += movement;
         }
         else {
-            body->x() -= speed;
+            body->x() -= movement;
         }
     }
 
-    void draw() override {
-
-    }
-
-
+    void draw() override {}
 
 private:
     double speed;

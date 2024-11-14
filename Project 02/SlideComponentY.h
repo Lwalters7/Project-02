@@ -1,11 +1,12 @@
 #pragma once
 #include "Component.h"
 #include "BodyComponent.h"
+#include "Engine.h"
 
 class SlideComponentY : public Component {
 public:
     SlideComponentY(GameObject& parent) : Component(parent) {
-        speed =.1;
+        speed = 100.0; 
         topY = 0;
         bottomY = Engine::height;
     }
@@ -22,6 +23,8 @@ public:
     void update() override {
         auto body = parent().get<BodyComponent>();
 
+        if (!body) return;
+
         if (body->y() > bottomY) {
             goingDown = false;
             body->y() = bottomY;
@@ -31,16 +34,16 @@ public:
             body->y() = topY;
         }
 
+        double movement = speed * Engine::deltaTime();
         if (goingDown) {
-            body->y() += speed;
+            body->y() += movement;
         }
         else {
-            body->y() -= speed;
+            body->y() -= movement;
         }
     }
 
     void draw() override {
-        // SlideComponentY does not need to draw anything.
     }
 
 private:

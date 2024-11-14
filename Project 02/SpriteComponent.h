@@ -24,11 +24,9 @@ public:
     void draw() override {
         auto body = parent().get<BodyComponent>();
         if (body && texture) {
-            // Get the world position of the GameObject
             float worldX = body->x();
             float worldY = body->y();
 
-            // Transform the world position to screen position using the View
             SDL_Point screenPos = View::getInstance().worldToScreen(worldX, worldY);
 
             SDL_Rect dst;
@@ -37,10 +35,8 @@ public:
             dst.w = static_cast<int>(width * View::getInstance().getScale());
             dst.h = static_cast<int>(height * View::getInstance().getScale());
 
-            // Determine the flip state based on facing direction
             SDL_RendererFlip flip = body->isFacingLeft() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
-            // Render the texture with transformations applied
             SDL_RenderCopyEx(Engine::getRenderer(), texture, nullptr, &dst, body->angle() + View::getInstance().getRotation(), nullptr, flip);
         }
     }

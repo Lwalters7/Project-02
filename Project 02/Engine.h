@@ -24,13 +24,12 @@ public:
 
     static double deltaTime();
 
-
 private:
     static bool isRunning;
     static SDL_Window* window;
     static SDL_Renderer* renderer;
     static std::vector<std::unique_ptr<GameObject>> gameObjects;
 
-    static double _deltaTime;    // Stores the time between frames
-    static Uint32 _lastFrameTime; // Stores the time at the last frame
+    static double _deltaTime;       // Time between frames in seconds
+    static Uint32 _lastFrameTime;   // Time at the last frame
 };

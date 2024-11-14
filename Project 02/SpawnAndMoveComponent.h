@@ -17,7 +17,6 @@ public:
         auto body = parent().get<BodyComponent>();
 
         if (body) {
-            // Move the object to the left
             body->x() -= speed;
 
             // Check if the object is off the left side of the screen

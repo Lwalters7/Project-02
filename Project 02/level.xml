@@ -8,15 +8,15 @@
 	<GameObject>
 		<SpriteComponent texture="planet1" width ="100" height="100" />
 		<BodyComponent x="300" y="400" />
-		<SlideComponentX speed="1" leftBound="100" rightBound="200" />
+		<SlideComponentX speed="100" leftBound="100" rightBound="300" />
 	</GameObject>
 	<GameObject>
 		<SpriteComponent texture="planet2" width ="36" height="36" />
 		<BodyComponent x="500" y="200" />
-		<SlideComponentY speed="1" topBound="100" bottomBound="200" />
+		<SlideComponentY speed="150" topBound="100" bottomBound="400" />
 	</GameObject>
 	<GameObject>
 		<SpriteComponent texture="asteroid" />
-		<AsteroidComponent spawnInterval="2.0" speed="5.0" rotationSpeed="25.0" />
+		<AsteroidComponent spawnInterval="2.0" speed="5.0" rotationSpeed="205.0" />
 	</GameObject>
 </Level>

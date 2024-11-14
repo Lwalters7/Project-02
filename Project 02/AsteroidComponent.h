@@ -18,10 +18,9 @@ public:
     void update() override {
         timeSinceLastSpawn += Engine::deltaTime();
 
-        // Spawn a new asteroid if the interval has passed
         if (timeSinceLastSpawn >= spawnInterval) {
             spawnAsteroid();
-            timeSinceLastSpawn = 0.0;  // Reset the timer
+            timeSinceLastSpawn = 0.0;  
         }
 
         // Update and check each asteroid for out-of-bounds
@@ -47,7 +46,7 @@ public:
 
 private:
     void spawnAsteroid() {
-        int yPos = (std::rand() % (Engine::height - 64)) + 32;
+        int yPos = (std::rand() % (Engine::height - 64));
         auto asteroid = std::make_unique<GameObject>();
 
         asteroid->add<BodyComponent>(Engine::width, yPos);
@@ -62,5 +61,5 @@ private:
     double asteroidSpeed;       // Speed of asteroid movement
     double timeSinceLastSpawn;  // Time since the last asteroid spawn
     std::vector<std::unique_ptr<GameObject>> asteroids;  // Active asteroids
-    double rotationSpeed;
+    double rotationSpeed;   //havent implemented this yet
 };

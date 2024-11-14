@@ -2,12 +2,13 @@
 #include "Component.h"
 #include "BodyComponent.h"
 #include "Input.h"
+#include "Engine.h"
 #include <SDL2/SDL.h>
 
 class ControllerComponent : public Component {
 public:
     ControllerComponent(GameObject& parent)
-        : Component(parent), moveSpeed(3.0), jumpForce(3.0), canJump(true) {}
+        : Component(parent), moveSpeed(300.0), jumpForce(300.0), canJump(true) {}
 
     ControllerComponent(GameObject& parent, double moveSpeed, double jumpForce)
         : Component(parent), moveSpeed(moveSpeed), jumpForce(jumpForce), canJump(true) {}
@@ -16,19 +17,18 @@ public:
         auto body = parent().get<BodyComponent>();
 
         if (body) {
-            // Horizontal movement
+            double movement = moveSpeed * Engine::deltaTime();
             if (Input::isKeyDown(SDLK_LEFT)) {
-                body->x() -= moveSpeed;
+                body->x() -= movement;
                 body->setFacingLeft(true);
             }
             if (Input::isKeyDown(SDLK_RIGHT)) {
-                body->x() += moveSpeed;
+                body->x() += movement;
                 body->setFacingLeft(false);
             }
 
-            // Jump by setting initial upward velocity
             if (Input::isKeyDown(SDLK_SPACE) && canJump) {
-                body->setVelocityY(-jumpForce);
+                body->setVelocityY(-jumpForce * Engine::deltaTime());
                 canJump = false;
             }
             else if (!Input::isKeyDown(SDLK_SPACE)) {
@@ -41,7 +41,7 @@ public:
     }
 
 private:
-    double moveSpeed;
-    double jumpForce;
-    bool canJump;
+    double moveSpeed; // Movement speed in units per second
+    double jumpForce; // Jump force in units per second
+    bool canJump;     // Flag to check if the player can jump
 };
