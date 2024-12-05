@@ -8,7 +8,7 @@
 
 class Textures {
 public:
-    // Load a texture from a file and store it with key
+    // Load a texture from a file and store it with the given key
     static bool load(const std::string& key, const std::string& filePath, SDL_Renderer* renderer) {
         SDL_Surface* tempSurface = IMG_Load(filePath.c_str());  // Using BMP for simplicity
         if (!tempSurface) {
@@ -39,10 +39,12 @@ public:
         return nullptr;
     }
 
+    // Remove a texture by its key
     static void remove(const std::string& key) {
         textures.erase(key);
     }
 
+    // Clear all textures
     static void clear() {
         textures.clear();
     }

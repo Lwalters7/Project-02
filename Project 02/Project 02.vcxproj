@@ -127,20 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AsteroidComponent.h" />
     <ClInclude Include="BodyComponent.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ControllerComponent.h" />
+    <ClInclude Include="EnemyComponent.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GravityComponent.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="SlideComponentX.h" />
     <ClInclude Include="SlideComponentY.h" />
-    <ClInclude Include="SpawnAndMoveComponent.h" />
     <ClInclude Include="SpriteComponent.h" />
+    <ClInclude Include="StarComponent.h" />
     <ClInclude Include="Textures.h" />
-    <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
@@ -153,6 +151,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="6.png" />
+    <Image Include="Black_hole.png" />
+    <Image Include="blue-back.png" />
+    <Image Include="coin.png" />
+    <Image Include="Diamond.png" />
     <Image Include="Ice.png" />
     <Image Include="Lava.png" />
     <Image Include="Terran.png" />

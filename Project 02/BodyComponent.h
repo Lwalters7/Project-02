@@ -1,57 +1,76 @@
 #pragma once
 #include "Component.h"
+#include <Box2D/Box2D.h>
 
 class BodyComponent : public Component {
 public:
-    BodyComponent(GameObject& owner, double x, double y)
-        : Component(owner), _x(x), _y(y), facingLeft(false), _velocityY(0.0), _angle(0.0) {}
+    // Constructor to initialize the Box2D body
+    BodyComponent(GameObject& owner, b2World& world, float x, float y, float width, float height, b2BodyType bodyType = b2_dynamicBody)
+        : Component(owner), world(world) {
+        // Define the body
+        b2BodyDef bodyDef;
+        bodyDef.type = bodyType;
+        bodyDef.position.Set((x) / SCALE, (y) / SCALE);
+        body = world.CreateBody(&bodyDef);
 
-    // Position accessors
-    double& x() { return _x; }
-    double& y() { return _y; }
+        // Define the shape (adjust for collision zone)
+        b2PolygonShape boxShape;
+        boxShape.SetAsBox((width / SCALE), (height / SCALE));
 
-    // Velocity accessors
-    double& velocityY() { return _velocityY; }
-
-    void setVelocityY(double vY) { _velocityY = vY; }
-
-    bool isFacingLeft() const { return facingLeft; }
-    void setFacingLeft(bool left) { facingLeft = left; }
-
-    // Angle accessor
-    double angle() const { return _angle; }
-
-    void updateAngle() {
-        double calculatedAngle = 0.0;
-
-        // Calculate the angle based on vertical velocity with different multipliers
-        if (_velocityY < 0.0) {
-            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.4;
-        }
-        else if (_velocityY > 0.0) {
-            calculatedAngle = atan2(_velocityY, 1.0) * (180.0 / M_PI) * 0.5;
-        }
-
-        // Invert the angle if facing left
-        if (facingLeft) {
-            _angle = -calculatedAngle;
-        }
-        else {
-            _angle = calculatedAngle;
-        }
+        // Define the fixture
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = &boxShape;
+        fixtureDef.density = 1.0f;
+        fixtureDef.friction = 0.3f;
+        body->CreateFixture(&fixtureDef);
     }
 
-    // Update position based on current velocity and angle
+
+    // Access the Box2D body
+    b2Body* getBody() { return body; }
+
+    // Set position manually (useful for initializing or teleporting objects)
+    void setPosition(float x, float y) {
+        body->SetTransform(b2Vec2(x / SCALE, y / SCALE), body->GetAngle());
+    }
+
+    // Get position in pixels
+    void getPosition(float& x, float& y) const {
+        const auto& pos = body->GetPosition();
+        x = pos.x * SCALE;
+        y = pos.y * SCALE;
+    }
+
+
+    // Get linear velocity in pixels per second
+    void getVelocity(float& vx, float& vy) const {
+        const auto& vel = body->GetLinearVelocity();
+        vx = vel.x * SCALE;
+        vy = vel.y * SCALE;
+    }
+
+    // Synchronize the GameObject position with the Box2D body position
     void update() override {
-        _y += _velocityY;
-        updateAngle();
+        const auto& pos = body->GetPosition();
+        parent().setPosition(pos.x * SCALE, pos.y * SCALE); // Convert meters back to pixels
     }
 
-    void draw() override {}
+    void draw() override {
+    }
+
+    // Destructor to clean up the Box2D body
+    ~BodyComponent() {
+        if (body) {
+            world.DestroyBody(body); // Cleanup Box2D body
+            body = nullptr;
+        }
+    }
+
+    // Static getter for SCALE
+    static float getScale() { return SCALE; }
 
 private:
-    double _x, _y;            // Position coordinates
-    double _velocityY;  // Velocity in x and y directions
-    double _angle;            // Angle to face left or right
-    bool facingLeft;     //self explanatory
+    static constexpr float SCALE = 30.0f; // Pixels-to-meters conversion factor
+    b2World& world;  // Reference to the Box2D world
+    b2Body* body;    // Box2D body managed by this component
 };

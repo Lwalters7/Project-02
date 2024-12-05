@@ -2,46 +2,80 @@
 #include "Component.h"
 #include "BodyComponent.h"
 #include "Input.h"
-#include "Engine.h"
 #include <SDL2/SDL.h>
+#include <algorithm>
 
 class ControllerComponent : public Component {
 public:
-    ControllerComponent(GameObject& parent)
-        : Component(parent), moveSpeed(300.0), jumpForce(300.0), canJump(true) {}
-
-    ControllerComponent(GameObject& parent, double moveSpeed, double jumpForce)
+    ControllerComponent(GameObject& parent, double moveSpeed = 3.0, double jumpForce = 4.0)
         : Component(parent), moveSpeed(moveSpeed), jumpForce(jumpForce), canJump(true) {}
 
     void update() override {
         auto body = parent().get<BodyComponent>();
+        auto sprite = parent().get<SpriteComponent>();
 
         if (body) {
-            double movement = moveSpeed * Engine::deltaTime();
+            auto b2Body = body->getBody();
+
             if (Input::isKeyDown(SDLK_LEFT)) {
-                body->x() -= movement;
-                body->setFacingLeft(true);
+                b2Body->SetLinearVelocity(b2Vec2(-moveSpeed, b2Body->GetLinearVelocity().y));
+                if (sprite) {
+                    sprite->setFlip(SDL_FLIP_HORIZONTAL); // Flip texture for left movement
+                }
             }
             if (Input::isKeyDown(SDLK_RIGHT)) {
-                body->x() += movement;
-                body->setFacingLeft(false);
+                b2Body->SetLinearVelocity(b2Vec2(moveSpeed, b2Body->GetLinearVelocity().y));
+                if (sprite) {
+                    sprite->setFlip(SDL_FLIP_NONE); // No flip for right movement
+                }
             }
 
+            float maxJumpVelocity = -5.0f;
+
             if (Input::isKeyDown(SDLK_SPACE) && canJump) {
-                body->setVelocityY(-jumpForce * Engine::deltaTime());
+                b2Body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
                 canJump = false;
+
+                // Cap the vertical velocity
+                b2Vec2 velocity = b2Body->GetLinearVelocity();
+                float maxUpwardVelocity = -6.0f; // Maximum allowed upward velocity (negative because up is negative Y)
+
+                if (velocity.y < maxUpwardVelocity) {
+                    velocity.y = maxUpwardVelocity; // Cap the upward velocity
+                    b2Body->SetLinearVelocity(velocity);
+                }
             }
-            else if (!Input::isKeyDown(SDLK_SPACE)) {
+
+            if (!Input::isKeyDown(SDLK_SPACE)) {
                 canJump = true;
             }
+
+            float yVelocity = b2Body->GetLinearVelocity().y;
+            float xVelocity = b2Body->GetLinearVelocity().x;
+            float angularVelocity = calculateAngularVelocity(yVelocity);
+            b2Body->SetAngularVelocity(angularVelocity);
+
+            if (sprite) {
+                float angle = b2Body->GetAngle() * (180.0f / M_PI); // Convert radians to degrees
+                
+                if (xVelocity < 0) { // Moving left
+                    angle = -angle;
+                }
+                sprite->setAngle(angle);
+            }
+
         }
     }
 
-    void draw() override {
-    }
+    void draw() override {}
 
 private:
-    double moveSpeed; // Movement speed in units per second
-    double jumpForce; // Jump force in units per second
-    bool canJump;     // Flag to check if the player can jump
+    double moveSpeed;
+    double jumpForce;
+    bool canJump;
+
+    float calculateAngularVelocity(float yVelocity){
+        float sensitivity = 0.1f;
+        return yVelocity * sensitivity;
+    }
 };

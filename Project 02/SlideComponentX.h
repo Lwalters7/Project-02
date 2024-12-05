@@ -1,53 +1,39 @@
 #pragma once
 #include "Component.h"
 #include "BodyComponent.h"
-#include "Engine.h"
 
 class SlideComponentX : public Component {
 public:
-    SlideComponentX(GameObject& parent) : Component(parent) {
-        speed = 10.0;
-        leftx = 0;
-        rightx = Engine::width;
-    }
+    // Constructor
+    SlideComponentX(GameObject& parent, double speed = 0.1, int leftBound = 0, int rightBound = Engine::width)
+        : Component(parent), speed(speed), leftBound(leftBound), rightBound(rightBound), goingRight(true) {}
 
-    SlideComponentX(GameObject& parent, double speed)
-        : Component(parent), speed(speed) {
-        leftx = 0;
-        rightx = Engine::width;
-    }
-
-    SlideComponentX(GameObject& parent, double speed, int leftx, int rightx)
-        : Component(parent), speed(speed), leftx(leftx), rightx(rightx) {}
-
+    // Update logic
     void update() override {
         auto body = parent().get<BodyComponent>();
 
-        if (!body) return;
+        if (body) {
+            auto b2Body = body->getBody();
+            auto position = b2Body->GetPosition().x * BodyComponent::getScale();
 
-        if (body->x() > rightx) {
-            goingRight = false;
-            body->x() = rightx;
-        }
-        if (body->x() < leftx) {
-            goingRight = true;
-            body->x() = leftx;
-        }
+            // Reverse direction at bounds
+            if (position >= rightBound) {
+                goingRight = false;
+            }
+            else if (position <= leftBound) {
+                goingRight = true;
+            }
 
-        double movement = speed * Engine::deltaTime();
-        if (goingRight) {
-            body->x() += movement;
-        }
-        else {
-            body->x() -= movement;
+            // Set horizontal velocity
+            b2Body->SetLinearVelocity(b2Vec2(goingRight ? speed : -speed, 0.0f)); // No vertical velocity
         }
     }
 
     void draw() override {}
 
 private:
-    double speed;
-    bool goingRight{ true };
-    int leftx;
-    int rightx;
+    double speed;    // Sliding speed
+    bool goingRight; // Direction flag
+    int leftBound;   // Left boundary for sliding
+    int rightBound;  // Right boundary for sliding
 };

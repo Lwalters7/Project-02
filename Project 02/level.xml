@@ -1,22 +1,32 @@
 <Level>
-	<GameObject>
-		<SpriteComponent texture="hero" width="64" height="32" />
-		<BodyComponent x="100" y="200" />
-		<GravityComponent />
+	<GameObject width="16" height="8">
+		<SpriteComponent texture="hero"/>
+		<BodyComponent x="100" y="200"/>
 		<ControllerComponent />
 	</GameObject>
-	<GameObject>
-		<SpriteComponent texture="planet1" width ="100" height="100" />
-		<BodyComponent x="300" y="400" />
-		<SlideComponentX speed="100" leftBound="100" rightBound="300" />
+	<GameObject width="25" height="25">
+		<SpriteComponent texture="planet1"/>
+		<BodyComponent x="300" y="400" bodyType="kinematic"/>
+		<SlideComponentX speed="1" leftBound="100" rightBound="200"/>
 	</GameObject>
-	<GameObject>
-		<SpriteComponent texture="planet2" width ="36" height="36" />
-		<BodyComponent x="500" y="200" />
-		<SlideComponentY speed="150" topBound="100" bottomBound="400" />
+	<GameObject width="14" height="14">
+		<SpriteComponent texture="planet2" />
+		<BodyComponent x="500" y="200" bodyType="kinematic"/>
+		<SlideComponentY speed="1" topBound="100" bottomBound="200" />
 	</GameObject>
-	<GameObject>
-		<SpriteComponent texture="asteroid" />
-		<AsteroidComponent spawnInterval="2.0" speed="5.0" rotationSpeed="205.0" />
+	<GameObject width="4" height="4">
+		<SpriteComponent texture="diamond" />
+		<BodyComponent x="450" y="400" bodyType="static"/>
+		<StarComponent />
+	</GameObject>
+	<GameObject width="24" height="24">
+		<SpriteComponent texture="planet2" />
+		<BodyComponent x="700" y="500" bodyType="kinematic"/>
+		<SlideComponentY speed="2" topBound="300" bottomBound="800" />
+	</GameObject>
+	<GameObject width="12" height="12">
+		<SpriteComponent texture="blackhole"/>
+		<BodyComponent x="500" y="600" bodyType="kinematic"/>
+		<EnemyComponent speed="3"/>
 	</GameObject>
 </Level>

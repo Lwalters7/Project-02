@@ -39,19 +39,16 @@
     <ClInclude Include="SpriteComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GravityComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ControllerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SlideComponentY.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpawnAndMoveComponent.h">
+    <ClInclude Include="StarComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AsteroidComponent.h">
+    <ClInclude Include="EnemyComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -85,6 +82,18 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Ice.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="coin.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Diamond.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Black_hole.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blue-back.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

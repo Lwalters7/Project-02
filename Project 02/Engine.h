@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <box2d/Box2d.h>
 
 class GameObject;
 
@@ -13,7 +14,7 @@ public:
 
     static bool init(const char* title, int width, int height);
     static void handleEvents();
-    static void loadLevel(const std::string& fileName);
+    static void loadLevel(const std::string& fileName);    
     static void update();
     static void render();
     static void clean();
@@ -22,7 +23,11 @@ public:
     static void run();
     static SDL_Renderer* getRenderer();
 
+
     static double deltaTime();
+    static b2World& getWorld(); 
+    
+    static GameObject* player; // Static pointer to the player
 
 private:
     static bool isRunning;
@@ -30,6 +35,7 @@ private:
     static SDL_Renderer* renderer;
     static std::vector<std::unique_ptr<GameObject>> gameObjects;
 
-    static double _deltaTime;       // Time between frames in seconds
-    static Uint32 _lastFrameTime;   // Time at the last frame
+    static double _deltaTime;    
+    static Uint32 _lastFrameTime; 
+    static b2World world; 
 };
