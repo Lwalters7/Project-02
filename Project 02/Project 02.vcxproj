@@ -136,6 +136,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="SlideComponentX.h" />
     <ClInclude Include="SlideComponentY.h" />
+    <ClInclude Include="Sounds.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StarComponent.h" />
     <ClInclude Include="Textures.h" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Sounds.cpp" />
     <ClCompile Include="Textures.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +160,13 @@
     <Image Include="Ice.png" />
     <Image Include="Lava.png" />
     <Image Include="Terran.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Ubuntu-Medium.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="blip.wav" />
+    <Media Include="cannon_x.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

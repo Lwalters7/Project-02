@@ -4,6 +4,7 @@
 #include "Input.h"
 #include <SDL2/SDL.h>
 #include <algorithm>
+#include "Sounds.h"
 
 class ControllerComponent : public Component {
 public:
@@ -35,7 +36,7 @@ public:
             if (Input::isKeyDown(SDLK_SPACE) && canJump) {
                 b2Body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
                 canJump = false;
-
+                Sounds::play("jump");
                 // Cap the vertical velocity
                 b2Vec2 velocity = b2Body->GetLinearVelocity();
                 float maxUpwardVelocity = -6.0f; // Maximum allowed upward velocity (negative because up is negative Y)

@@ -10,6 +10,8 @@
 #include "tinyxml2.h"
 #include "Input.h"
 #include <Box2D/Box2D.h>
+#include "Sounds.h"
+
 
 using namespace tinyxml2;
 
@@ -25,8 +27,11 @@ double Engine::_deltaTime = 0.0;
 Uint32 Engine::_lastFrameTime = 0;
 
 GameObject* Engine::player = nullptr; //pointer to player
+GameObject* Engine::enemy = nullptr; //pointer to player
 
+TTF_Font* Engine::font = nullptr;
 b2World Engine::world(b2Vec2(0.0f, 10.0f)); // Gravity vector (10 m/s² downward)
+
 
 
 // Return the delta time between frames
@@ -38,6 +43,7 @@ double Engine::deltaTime() {
 b2World& Engine::getWorld() {
     return world;
 }
+
 
 // Initialize the engine and create a window and renderer
 bool Engine::init(const char* title, int width, int height) {
@@ -60,6 +66,26 @@ bool Engine::init(const char* title, int width, int height) {
         return false;
     }
 
+    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+        std::cerr << "Failed to Initialize SDL: " << SDL_GetError() << std::endl;
+        return -1;
+    }
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        std::cerr << "Failed to Initialize SDL_mixer: " << Mix_GetError() << std::endl;
+        return-1;
+    }
+
+    if (TTF_Init() != 0) {
+        SDL_Log("Failed to initialize SDL_ttf: %s", TTF_GetError());
+        SDL_Quit();
+        exit(1);
+    }
+
+    TTF_Font* font = TTF_OpenFont("Ubuntu-Medium.ttf", 24);
+    if (!font) {
+        SDL_Log("Failed to load font: %s", TTF_GetError());
+        return false;
+    }
     isRunning = true;
     return true;
 }
@@ -96,6 +122,7 @@ void Engine::loadLevel(const std::string& fileName) {
         float objectHeight = objElem->FloatAttribute("height", 64.0f);
 
         bool isPlayer = false; // Flag to identify the player
+        bool isEnemy = false; //flag to find enemy
 
         for (XMLElement* compElem = objElem->FirstChildElement(); compElem; compElem = compElem->NextSiblingElement()) {
             std::string componentName = compElem->Name();
@@ -149,12 +176,16 @@ void Engine::loadLevel(const std::string& fileName) {
             else if (componentName == "EnemyComponent") {
                 double speed = compElem->DoubleAttribute("speed", 2);
                 gameObject->add<EnemyComponent>(speed);
+                isEnemy = true;
             }
         }
 
         // Assign the player GameObject if identified
         if (isPlayer) {
             Engine::player = gameObject.get();
+        }       
+        if (isEnemy) {
+            Engine::enemy = gameObject.get();
         }
 
         Engine::addGameObject(std::move(gameObject));
@@ -188,15 +219,51 @@ void Engine::render() {
     SDL_RenderPresent(renderer);
 }
 
+void Engine::checkPlayerEnemyCollision() {
+    if (!Engine::player || !Engine::enemy) {
+        return ; // Exit if either the player or enemy is not initialized
+    }
+
+    auto playerBody = Engine::player->get<BodyComponent>()->getBody();
+    auto enemyBody = Engine::enemy->get<BodyComponent>()->getBody();
+
+    // Check for AABB overlap (collision detection)
+    for (b2Fixture* playerFixture = playerBody->GetFixtureList(); playerFixture; playerFixture = playerFixture->GetNext()) {
+        for (b2Fixture* enemyFixture = enemyBody->GetFixtureList(); enemyFixture; enemyFixture = enemyFixture->GetNext()) {
+            if (b2TestOverlap(playerFixture->GetShape(), 0, enemyFixture->GetShape(), 0, playerBody->GetTransform(), enemyBody->GetTransform())) {
+                SDL_Log("Player collided with enemy. Game Over!");
+                Sounds::play("death");
+                Engine::stop();
+                return ;
+            }
+        }
+    }
+    return ;
+}
+
+
 void Engine::clean() {
+
+    gameObjects.clear(); 
+
     if (renderer) {
         SDL_DestroyRenderer(renderer);
+        renderer = nullptr;
     }
+
     if (window) {
         SDL_DestroyWindow(window);
+        window = nullptr;
     }
+    Sounds::clear();
+    Mix_CloseAudio();
+    TTF_Quit();
+
     SDL_Quit();
+
+    SDL_Log("Cleanup complete.");
 }
+
 
 bool Engine::running() {
     return isRunning;
@@ -219,6 +286,8 @@ void Engine::run() {
         render();
         SDL_Delay(16);  // 60 FPS (approximately)
 
+      checkPlayerEnemyCollision();
+
         // Remove destroyed objects
         for (auto it = gameObjects.begin(); it != gameObjects.end();) {
             if ((*it)->isDestroyed()) {
@@ -228,11 +297,23 @@ void Engine::run() {
                 ++it;
             }
         }
+
     }
 
     clean();
+    SDL_Log("cleaned");
 }
 
 SDL_Renderer* Engine::getRenderer() {
     return renderer;
+}
+
+void Engine::stop() {
+    isRunning = false;
+
+    // Clear the screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+    SDL_Delay(3000); // Pause to show the Game Over text
 }

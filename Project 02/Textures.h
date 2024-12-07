@@ -8,6 +8,7 @@
 
 class Textures {
 public:
+
     // Load a texture from a file and store it with the given key
     static bool load(const std::string& key, const std::string& filePath, SDL_Renderer* renderer) {
         SDL_Surface* tempSurface = IMG_Load(filePath.c_str());  // Using BMP for simplicity

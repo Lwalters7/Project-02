@@ -4,6 +4,9 @@
 #include <memory>
 #include <string>
 #include <box2d/Box2d.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
+
 
 class GameObject;
 
@@ -22,12 +25,20 @@ public:
     static void addGameObject(std::unique_ptr<GameObject> gameObject);
     static void run();
     static SDL_Renderer* getRenderer();
+    static void stop();
+
+    static void checkPlayerEnemyCollision();
+
+    static TTF_Font* font; // Static pointer to the font
+
 
 
     static double deltaTime();
     static b2World& getWorld(); 
     
     static GameObject* player; // Static pointer to the player
+    static GameObject* enemy;  // Pointer to the enemy GameObject
+
 
 private:
     static bool isRunning;
@@ -38,4 +49,6 @@ private:
     static double _deltaTime;    
     static Uint32 _lastFrameTime; 
     static b2World world; 
+
+
 };
