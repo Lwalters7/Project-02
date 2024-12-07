@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AsteroidComponent.h" />
     <ClInclude Include="BodyComponent.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ControllerComponent.h" />
@@ -153,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="6.png" />
+    <Image Include="asteroid-2.png" />
     <Image Include="Black_hole.png" />
     <Image Include="blue-back.png" />
     <Image Include="coin.png" />
@@ -167,6 +169,7 @@
   <ItemGroup>
     <Media Include="blip.wav" />
     <Media Include="cannon_x.wav" />
+    <Media Include="chime_up.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -29,4 +29,14 @@
 		<BodyComponent x="500" y="600" bodyType="kinematic"/>
 		<EnemyComponent speed="3"/>
 	</GameObject>
+	<GameObject width="36" height="36">
+		<SpriteComponent texture="asteroid"/>
+		<BodyComponent x="950" y="400" bodyType="kinematic"/>
+		<AsteroidComponent speed="10"/>
+	</GameObject>
+	<GameObject width="16" height="16">
+		<SpriteComponent texture="asteroid"/>
+		<BodyComponent x="950" y="700" bodyType="kinematic"/>
+		<AsteroidComponent speed="15"/>
+	</GameObject>
 </Level>

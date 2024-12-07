@@ -19,12 +19,15 @@ int main(int argc, char* argv[]) {
     Textures::load("planet2", "Lava.png", renderer);
     Textures::load("coin", "coin.png", renderer);
     Textures::load("diamond", "Diamond.png", renderer);
-    Textures::load("blackhole", "Black_hole.png", renderer); \
+    Textures::load("blackhole", "Black_hole.png", renderer); 
+    Textures::load("asteroid", "asteroid-2.png", renderer);
 
     Sounds::load("jump", "blip.wav");
     Sounds::setVolume("jump", MIX_MAX_VOLUME / 16);
     Sounds::load("death", "cannon_x.wav");
     Sounds::setVolume("death", MIX_MAX_VOLUME / 4);
+    Sounds::load("point", "chime_up.wav");
+    Sounds::setVolume("point", MIX_MAX_VOLUME / 8);
 
     // Load level from XML file
     Engine::loadLevel("level.xml");

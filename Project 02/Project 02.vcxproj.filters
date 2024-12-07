@@ -54,6 +54,9 @@
     <ClInclude Include="Sounds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AsteroidComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -102,6 +105,9 @@
     <Image Include="blue-back.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="asteroid-2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="Ubuntu-Medium.ttf">
@@ -113,6 +119,9 @@
       <Filter>Resource Files</Filter>
     </Media>
     <Media Include="cannon_x.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="chime_up.wav">
       <Filter>Resource Files</Filter>
     </Media>
   </ItemGroup>

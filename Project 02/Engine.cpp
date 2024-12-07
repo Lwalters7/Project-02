@@ -11,6 +11,7 @@
 #include "Input.h"
 #include <Box2D/Box2D.h>
 #include "Sounds.h"
+#include "AsteroidComponent.h"
 
 
 using namespace tinyxml2;
@@ -28,11 +29,23 @@ Uint32 Engine::_lastFrameTime = 0;
 
 GameObject* Engine::player = nullptr; //pointer to player
 GameObject* Engine::enemy = nullptr; //pointer to player
+GameObject* Engine::asteroid = nullptr;
 
 TTF_Font* Engine::font = nullptr;
 b2World Engine::world(b2Vec2(0.0f, 10.0f)); // Gravity vector (10 m/s² downward)
 
+int Engine::points = 0;
 
+
+void Engine::addPoints(int value)
+{
+    points += value;
+}
+
+int Engine::getPoints()
+{
+    return points;
+}
 
 // Return the delta time between frames
 double Engine::deltaTime() {
@@ -123,6 +136,7 @@ void Engine::loadLevel(const std::string& fileName) {
 
         bool isPlayer = false; // Flag to identify the player
         bool isEnemy = false; //flag to find enemy
+        bool isAsteroid = false;
 
         for (XMLElement* compElem = objElem->FirstChildElement(); compElem; compElem = compElem->NextSiblingElement()) {
             std::string componentName = compElem->Name();
@@ -178,6 +192,11 @@ void Engine::loadLevel(const std::string& fileName) {
                 gameObject->add<EnemyComponent>(speed);
                 isEnemy = true;
             }
+            else if (componentName == "AsteroidComponent") {
+                double speed = compElem->DoubleAttribute("speed", 5);
+                gameObject->add<AsteroidComponent>(speed);
+                isAsteroid = true;
+            }
         }
 
         // Assign the player GameObject if identified
@@ -186,6 +205,9 @@ void Engine::loadLevel(const std::string& fileName) {
         }       
         if (isEnemy) {
             Engine::enemy = gameObject.get();
+        }
+        if (isAsteroid) {
+            Engine::asteroid = gameObject.get();
         }
 
         Engine::addGameObject(std::move(gameObject));
@@ -226,6 +248,8 @@ void Engine::checkPlayerEnemyCollision() {
 
     auto playerBody = Engine::player->get<BodyComponent>()->getBody();
     auto enemyBody = Engine::enemy->get<BodyComponent>()->getBody();
+    auto asteroidBody = Engine::asteroid->get<BodyComponent>()->getBody();
+
 
     // Check for AABB overlap (collision detection)
     for (b2Fixture* playerFixture = playerBody->GetFixtureList(); playerFixture; playerFixture = playerFixture->GetNext()) {
@@ -235,6 +259,17 @@ void Engine::checkPlayerEnemyCollision() {
                 Sounds::play("death");
                 Engine::stop();
                 return ;
+            }
+        }
+    }
+
+    for (b2Fixture* playerFixture = playerBody->GetFixtureList(); playerFixture; playerFixture = playerFixture->GetNext()) {
+        for (b2Fixture* asteroidFixture = asteroidBody->GetFixtureList(); asteroidFixture; asteroidFixture = asteroidFixture->GetNext()) {
+            if (b2TestOverlap(playerFixture->GetShape(), 0, asteroidFixture->GetShape(), 0, playerBody->GetTransform(), asteroidBody->GetTransform())) {
+                SDL_Log("Player collided with asteroid. Game Over!");
+                Sounds::play("death");
+                Engine::stop();
+                return;
             }
         }
     }

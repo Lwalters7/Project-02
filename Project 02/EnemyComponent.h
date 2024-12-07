@@ -14,15 +14,9 @@ public:
 
     void update() override {
         auto body = parent().get<BodyComponent>();
-        if (!body || !Engine::player) {
-            return; // Exit if no BodyComponent or player exists
-        }
 
         auto b2Body = body->getBody();
         auto playerBody = Engine::player->get<BodyComponent>()->getBody();
-        if (!playerBody) {
-            return; // Exit if the player's BodyComponent is unavailable
-        }
 
         // Get current positions of enemy and player
         b2Vec2 enemyPosition = b2Body->GetPosition();

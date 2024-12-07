@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <box2d/box2d.h>
+#include "Engine.h"
+#include "Sounds.h"
 
 class StarComponent : public Component {
 public:
@@ -46,6 +48,7 @@ public:
         // Check if the player's body intersects the star's AABB
         if (b2TestOverlap(starAABB, playerAABB)) {
             moveToRandomPosition(b2Body); // Move the star to a random position
+            Sounds::play("point");
         }
     }
 
@@ -54,11 +57,10 @@ public:
 
 private:
 
-    int points=0;
     // Moves the star to a random position
     void moveToRandomPosition(b2Body* b2Body) {
-        points += 1;
-        std::cout << points;
+        Engine::addPoints(1);
+        std::cout << Engine::getPoints();
         float randomX = static_cast<float>(std::rand() % Engine::width);
         float randomY = static_cast<float>(std::rand() % Engine::height);
 

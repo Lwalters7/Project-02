@@ -1,65 +1,56 @@
 #pragma once
 #include "Component.h"
-#include "GameObject.h"
 #include "Engine.h"
 #include "BodyComponent.h"
-#include "SpriteComponent.h"
-#include <SDL2/SDL.h>
 #include <cstdlib>
-#include <ctime>
+#include <iostream>
+#include <box2d/box2d.h>
+#include "Engine.h"
 
 class AsteroidComponent : public Component {
 public:
-    AsteroidComponent(GameObject& parent, double spawnInterval, double asteroidSpeed, double rotationSpeed)
-        : Component(parent), spawnInterval(spawnInterval), asteroidSpeed(asteroidSpeed), rotationSpeed(rotationSpeed), timeSinceLastSpawn(0.0) {
-        std::srand(static_cast<unsigned>(std::time(nullptr)));  // Seed random number generator
+    // Constructor
+    AsteroidComponent(GameObject& parent, double speed)
+        : Component(parent), speed(speed) {
+        std::srand(static_cast<unsigned>(std::time(nullptr))); // Seed RNG
     }
-
+    
     void update() override {
-        timeSinceLastSpawn += Engine::deltaTime();
+        auto body = parent().get<BodyComponent>();
 
-        if (timeSinceLastSpawn >= spawnInterval) {
-            spawnAsteroid();
-            timeSinceLastSpawn = 0.0;  
+        auto b2Body = body->getBody();
+
+        if (Engine::getPoints() > 1) {
+            spawn = true;
         }
 
-        // Update and check each asteroid for out-of-bounds
-        for (auto it = asteroids.begin(); it != asteroids.end();) {
-            auto& asteroid = *it;
-            asteroid->get<BodyComponent>()->x() -= asteroidSpeed;
-
-            // Remove asteroid if it goes off the left side of the screen
-            if (asteroid->get<BodyComponent>()->x() < -128) {
-                it = asteroids.erase(it);
+        if (spawn) {
+            // Set leftward velocity if it's not already moving
+            if (b2Body->GetLinearVelocity().x == 0) {
+                b2Vec2 velocity(-static_cast<float>(speed), 0.0f);
+                b2Body->SetLinearVelocity(velocity);
             }
-            else {
-                ++it;
+
+            // Check if asteroid is off the left side of the screen
+            if (b2Body->GetPosition().x * BodyComponent::getScale() < 0) {
+                resetAsteroid(b2Body);
             }
         }
+
     }
 
-    void draw() override {
-        for (auto& asteroid : asteroids) {
-            asteroid->draw();
-        }
-    }
+    void draw() override {}
 
 private:
-    void spawnAsteroid() {
-        int yPos = (std::rand() % (Engine::height - 64));
-        auto asteroid = std::make_unique<GameObject>();
+    double speed;
+    int spawnRate;
+    bool spawn = false;
 
-        asteroid->add<BodyComponent>(Engine::width, yPos);
+    void resetAsteroid(b2Body* b2Body) {
+        float randomY = static_cast<float>(std::rand() % Engine::height);
 
-        asteroid->add<SpriteComponent>("asteroid", 128, 128);
-
-        asteroids.push_back(std::move(asteroid));
+        b2Body->SetTransform(b2Vec2(1000 / BodyComponent::getScale() , randomY / BodyComponent::getScale()), b2Body->GetAngle());
+        b2Vec2 velocity(-static_cast<float>(speed), 0.0f); // Move left
+        b2Body->SetLinearVelocity(velocity);
     }
-
-
-    double spawnInterval;       // Time interval between asteroid spawns
-    double asteroidSpeed;       // Speed of asteroid movement
-    double timeSinceLastSpawn;  // Time since the last asteroid spawn
-    std::vector<std::unique_ptr<GameObject>> asteroids;  // Active asteroids
-    double rotationSpeed;   //havent implemented this yet
 };

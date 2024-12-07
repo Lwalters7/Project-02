@@ -31,13 +31,15 @@ public:
 
     static TTF_Font* font; // Static pointer to the font
 
-
+    static void addPoints(int value); // Function to add points
+    static int getPoints();           // Function to get the current points
 
     static double deltaTime();
     static b2World& getWorld(); 
     
     static GameObject* player; // Static pointer to the player
     static GameObject* enemy;  // Pointer to the enemy GameObject
+    static GameObject* asteroid;
 
 
 private:
@@ -49,6 +51,9 @@ private:
     static double _deltaTime;    
     static Uint32 _lastFrameTime; 
     static b2World world; 
+
+    static int points; // Static variable to track points
+
 
 
 };
