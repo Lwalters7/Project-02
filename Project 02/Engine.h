@@ -6,7 +6,7 @@
 #include <box2d/Box2d.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-
+#include "Textures.h"
 
 class GameObject;
 
@@ -39,9 +39,8 @@ public:
     
     static GameObject* player; // Static pointer to the player
     static GameObject* enemy;  // Pointer to the enemy GameObject
-    static GameObject* asteroid;
-
-
+    static GameObject* asteroid1;
+    static GameObject* asteroid2;
 private:
     static bool isRunning;
     static SDL_Window* window;
@@ -49,11 +48,8 @@ private:
     static std::vector<std::unique_ptr<GameObject>> gameObjects;
 
     static double _deltaTime;    
-    static Uint32 _lastFrameTime; 
+    static Uint32 _lastFrameTime;  //was using this to track last time an asteroid was spawned
     static b2World world; 
 
     static int points; // Static variable to track points
-
-
-
 };

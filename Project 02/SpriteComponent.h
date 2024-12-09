@@ -17,38 +17,27 @@ public:
         color = { 255, 255, 255, 255 };
 
     }
-
     void setAngle(float newAngle) {
         angle = newAngle;
     }
     void setFlip(SDL_RendererFlip newFlip) {
         flip = newFlip;
     }
-
     void setPosition(float x, float y) {
-        position.x = static_cast<int>(x); // Update rendering position
+        position.x = static_cast<int>(x);
         position.y = static_cast<int>(y);
     }
-
     void update() override {}
-
-    void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-        color = { r, g, b, a };
-    }
-
     void draw() override {
-        // If texture is present, render it
         float x, y;
         parent().getPosition(x, y);
 
         SDL_Rect dst = { static_cast<int>(x), static_cast<int>(y), width * SCALE, height * SCALE };
         SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
 
-        // Render the sprite with rotation
         SDL_RenderCopyEx(Engine::getRenderer(), texture, nullptr, &dst, angle, nullptr, flip);
 
     }
-
 private:
     SDL_Texture* texture; // Texture to render
     int width;            // Width of the sprite

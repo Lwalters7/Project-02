@@ -57,6 +57,12 @@
     <ClInclude Include="AsteroidComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PowerUpComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -72,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sounds.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextUntils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -106,6 +115,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="asteroid-2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Baren.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

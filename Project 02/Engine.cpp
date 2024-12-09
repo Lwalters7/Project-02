@@ -12,11 +12,12 @@
 #include <Box2D/Box2D.h>
 #include "Sounds.h"
 #include "AsteroidComponent.h"
-
+#include "PowerUpComponent.h"
+#include "TextUtils.h"
+#include <string>
 
 using namespace tinyxml2;
 
-// Define static members
 bool Engine::isRunning = false;
 SDL_Window* Engine::window = nullptr;
 SDL_Renderer* Engine::renderer = nullptr;
@@ -27,12 +28,14 @@ int Engine::height = 0;
 double Engine::_deltaTime = 0.0;
 Uint32 Engine::_lastFrameTime = 0;
 
-GameObject* Engine::player = nullptr; //pointer to player
-GameObject* Engine::enemy = nullptr; //pointer to player
-GameObject* Engine::asteroid = nullptr;
+GameObject* Engine::player = nullptr;    
+GameObject* Engine::enemy = nullptr;     
+GameObject* Engine::asteroid1 = nullptr;  
+GameObject* Engine::asteroid2 = nullptr; 
+
 
 TTF_Font* Engine::font = nullptr;
-b2World Engine::world(b2Vec2(0.0f, 10.0f)); // Gravity vector (10 m/s² downward)
+b2World Engine::world(b2Vec2(0.0f, 10.0f));
 
 int Engine::points = 0;
 
@@ -47,18 +50,15 @@ int Engine::getPoints()
     return points;
 }
 
-// Return the delta time between frames
 double Engine::deltaTime() {
     return _deltaTime;
 }
 
-// Access the Box2D world
 b2World& Engine::getWorld() {
     return world;
 }
 
 
-// Initialize the engine and create a window and renderer
 bool Engine::init(const char* title, int width, int height) {
     Engine::width = width;
     Engine::height = height;
@@ -88,33 +88,31 @@ bool Engine::init(const char* title, int width, int height) {
         return-1;
     }
 
-    if (TTF_Init() != 0) {
+    if (TTF_Init() == -1) {
         SDL_Log("Failed to initialize SDL_ttf: %s", TTF_GetError());
-        SDL_Quit();
-        exit(1);
+        return false;
     }
 
-    TTF_Font* font = TTF_OpenFont("Ubuntu-Medium.ttf", 24);
+    font = TTF_OpenFont("Ubuntu-Medium.ttf", 24); 
     if (!font) {
         SDL_Log("Failed to load font: %s", TTF_GetError());
         return false;
     }
+
     isRunning = true;
     return true;
 }
 
-// Event handling (e.g., for quitting the game)
 void Engine::handleEvents() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             isRunning = false;
         }
-        Input::processEvent(event);  // Update input states
+        Input::processEvent(event);
     }
 }
 
-// Load game objects from an XML file
 void Engine::loadLevel(const std::string& fileName) {
     XMLDocument doc;
     if (doc.LoadFile(fileName.c_str()) != XML_SUCCESS) {
@@ -134,9 +132,10 @@ void Engine::loadLevel(const std::string& fileName) {
         float objectWidth = objElem->FloatAttribute("width", 64.0f);
         float objectHeight = objElem->FloatAttribute("height", 64.0f);
 
-        bool isPlayer = false; // Flag to identify the player
-        bool isEnemy = false; //flag to find enemy
-        bool isAsteroid = false;
+        bool isPlayer = false;
+        bool isEnemy = false; 
+        bool isAsteroid1 = false;
+        bool isAsteroid2 = false;
 
         for (XMLElement* compElem = objElem->FirstChildElement(); compElem; compElem = compElem->NextSiblingElement()) {
             std::string componentName = compElem->Name();
@@ -194,34 +193,37 @@ void Engine::loadLevel(const std::string& fileName) {
             }
             else if (componentName == "AsteroidComponent") {
                 double speed = compElem->DoubleAttribute("speed", 5);
-                gameObject->add<AsteroidComponent>(speed);
-                isAsteroid = true;
+                int level = compElem->IntAttribute("level");
+                gameObject->add<AsteroidComponent>(speed, level);
+                
+                if (level == 3) { isAsteroid1 = true; }
+                if (level == 5) { isAsteroid2 = true; }
             }
         }
-
-        // Assign the player GameObject if identified
         if (isPlayer) {
             Engine::player = gameObject.get();
         }       
         if (isEnemy) {
             Engine::enemy = gameObject.get();
         }
-        if (isAsteroid) {
-            Engine::asteroid = gameObject.get();
+        if (isAsteroid1) {
+            Engine::asteroid1 = gameObject.get();
         }
-
+        if (isAsteroid2) {
+            Engine::asteroid2 = gameObject.get();
+        }
         Engine::addGameObject(std::move(gameObject));
+
+        auto powerUpManager = std::make_unique<GameObject>();
+        powerUpManager->add<PowerUpComponent>(world);
+        Engine::addGameObject(std::move(powerUpManager));     
     }
 }
 
 
 
-// Update all game objects
 void Engine::update() {
-    // Step the Box2D world
-    world.Step(deltaTime(), 8, 3); // 8 velocity iterations, 3 position iterations
-
-    // Update all game objects
+    world.Step(deltaTime(), 8, 3); 
     for (auto& gameObject : gameObjects) {
         gameObject->update();
     }
@@ -229,7 +231,6 @@ void Engine::update() {
     spawnTimer += deltaTime();
 }
 
-// Render all game objects
 void Engine::render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
@@ -238,20 +239,30 @@ void Engine::render() {
         gameObject->draw();
     }
 
+    std::string pointsText = std::to_string(Engine::getPoints());
+
+    SDL_Color textColor = { 255, 255, 255, 255 }; // White color
+    SDL_Texture* textTexture = renderText(pointsText, textColor, renderer, font);
+
+    if (textTexture) {
+        SDL_Rect textRect = { 50, 50, 50, 50 }; // Position and size of the text
+        SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
+        SDL_DestroyTexture(textTexture); // Clean up after rendering
+    }
     SDL_RenderPresent(renderer);
 }
 
 void Engine::checkPlayerEnemyCollision() {
     if (!Engine::player || !Engine::enemy) {
-        return ; // Exit if either the player or enemy is not initialized
+        return ;
     }
 
     auto playerBody = Engine::player->get<BodyComponent>()->getBody();
     auto enemyBody = Engine::enemy->get<BodyComponent>()->getBody();
-    auto asteroidBody = Engine::asteroid->get<BodyComponent>()->getBody();
+    auto asteroidBody1 = Engine::asteroid1->get<BodyComponent>()->getBody();
+    auto asteroidBody2 = Engine::asteroid2->get<BodyComponent>()->getBody();
 
-
-    // Check for AABB overlap (collision detection)
+    //AABB
     for (b2Fixture* playerFixture = playerBody->GetFixtureList(); playerFixture; playerFixture = playerFixture->GetNext()) {
         for (b2Fixture* enemyFixture = enemyBody->GetFixtureList(); enemyFixture; enemyFixture = enemyFixture->GetNext()) {
             if (b2TestOverlap(playerFixture->GetShape(), 0, enemyFixture->GetShape(), 0, playerBody->GetTransform(), enemyBody->GetTransform())) {
@@ -264,8 +275,19 @@ void Engine::checkPlayerEnemyCollision() {
     }
 
     for (b2Fixture* playerFixture = playerBody->GetFixtureList(); playerFixture; playerFixture = playerFixture->GetNext()) {
-        for (b2Fixture* asteroidFixture = asteroidBody->GetFixtureList(); asteroidFixture; asteroidFixture = asteroidFixture->GetNext()) {
-            if (b2TestOverlap(playerFixture->GetShape(), 0, asteroidFixture->GetShape(), 0, playerBody->GetTransform(), asteroidBody->GetTransform())) {
+        for (b2Fixture* asteroidFixture = asteroidBody1->GetFixtureList(); asteroidFixture; asteroidFixture = asteroidFixture->GetNext()) {
+            if (b2TestOverlap(playerFixture->GetShape(), 0, asteroidFixture->GetShape(), 0, playerBody->GetTransform(), asteroidBody1->GetTransform())) {
+                SDL_Log("Player collided with asteroid. Game Over!");
+                Sounds::play("death");
+                Engine::stop();
+                return;
+            }
+        }
+    }
+
+    for (b2Fixture* playerFixture = playerBody->GetFixtureList(); playerFixture; playerFixture = playerFixture->GetNext()) {
+        for (b2Fixture* asteroidFixture = asteroidBody2->GetFixtureList(); asteroidFixture; asteroidFixture = asteroidFixture->GetNext()) {
+            if (b2TestOverlap(playerFixture->GetShape(), 0, asteroidFixture->GetShape(), 0, playerBody->GetTransform(), asteroidBody2->GetTransform())) {
                 SDL_Log("Player collided with asteroid. Game Over!");
                 Sounds::play("death");
                 Engine::stop();
@@ -309,21 +331,19 @@ void Engine::addGameObject(std::unique_ptr<GameObject> gameObject) {
 }
 
 void Engine::run() {
-    _lastFrameTime = SDL_GetTicks();  // Initialize the first frame time
+    _lastFrameTime = SDL_GetTicks(); 
 
     while (isRunning) {
         Uint32 currentFrameTime = SDL_GetTicks();
-        _deltaTime = (currentFrameTime - _lastFrameTime) / 1000.0;  // Convert to seconds
+        _deltaTime = (currentFrameTime - _lastFrameTime) / 1000.0; 
         _lastFrameTime = currentFrameTime;
 
         handleEvents();
         update();
         render();
-        SDL_Delay(16);  // 60 FPS (approximately)
+        SDL_Delay(16);  
+        checkPlayerEnemyCollision();
 
-      checkPlayerEnemyCollision();
-
-        // Remove destroyed objects
         for (auto it = gameObjects.begin(); it != gameObjects.end();) {
             if ((*it)->isDestroyed()) {
                 it = gameObjects.erase(it);
@@ -332,9 +352,7 @@ void Engine::run() {
                 ++it;
             }
         }
-
     }
-
     clean();
     SDL_Log("cleaned");
 }
@@ -346,9 +364,23 @@ SDL_Renderer* Engine::getRenderer() {
 void Engine::stop() {
     isRunning = false;
 
-    // Clear the screen
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); //clear
     SDL_RenderClear(renderer);
+
+    SDL_Color textColor = { 255, 255, 255, 255 }; 
+    SDL_Texture* textTexture = renderText("GAME OVER", textColor, renderer, font);
+    if (textTexture) {
+        int textWidth = 0, textHeight = 0;
+        SDL_QueryTexture(textTexture, nullptr, nullptr, &textWidth, &textHeight);
+        SDL_Rect textRect = {
+            (Engine::width - textWidth) / 2,  
+            (Engine::height - textHeight) / 2, 
+            textWidth,
+            textHeight
+        };
+        SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
+        SDL_DestroyTexture(textTexture);
+    }
     SDL_RenderPresent(renderer);
     SDL_Delay(3000); // Pause to show the Game Over text
 }

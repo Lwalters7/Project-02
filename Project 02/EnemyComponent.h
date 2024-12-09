@@ -18,21 +18,18 @@ public:
         auto b2Body = body->getBody();
         auto playerBody = Engine::player->get<BodyComponent>()->getBody();
 
-        // Get current positions of enemy and player
         b2Vec2 enemyPosition = b2Body->GetPosition();
         b2Vec2 playerPosition = playerBody->GetPosition();
 
-        // Calculate direction vector to the player
         b2Vec2 direction = playerPosition - enemyPosition;
-        direction.Normalize(); // Normalize to get the unit vector
+        direction.Normalize();
 
-        // Apply force or velocity towards the player
         b2Vec2 velocity = b2Vec2(direction.x * speed, direction.y * speed);
-        b2Body->SetLinearVelocity(velocity); // Set velocity directly
+        b2Body->SetLinearVelocity(velocity); 
     }
 
     void draw() override {}
 
 private:
-    int speed; // Speed multiplier for chasing the player
+    int speed; 
 };

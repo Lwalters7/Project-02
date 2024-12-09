@@ -16,27 +16,27 @@
 	</GameObject>
 	<GameObject width="4" height="4">
 		<SpriteComponent texture="diamond" />
-		<BodyComponent x="450" y="400" bodyType="static"/>
+		<BodyComponent x="250" y="200" bodyType="static"/>
 		<StarComponent />
 	</GameObject>
 	<GameObject width="24" height="24">
-		<SpriteComponent texture="planet2" />
+		<SpriteComponent texture="planet3" />
 		<BodyComponent x="700" y="500" bodyType="kinematic"/>
 		<SlideComponentY speed="2" topBound="300" bottomBound="800" />
 	</GameObject>
 	<GameObject width="12" height="12">
 		<SpriteComponent texture="blackhole"/>
-		<BodyComponent x="500" y="600" bodyType="kinematic"/>
+		<BodyComponent x="700" y="600" bodyType="kinematic"/>
 		<EnemyComponent speed="3"/>
 	</GameObject>
 	<GameObject width="36" height="36">
 		<SpriteComponent texture="asteroid"/>
 		<BodyComponent x="950" y="400" bodyType="kinematic"/>
-		<AsteroidComponent speed="10"/>
+		<AsteroidComponent speed="10" level="3"/>
 	</GameObject>
 	<GameObject width="16" height="16">
 		<SpriteComponent texture="asteroid"/>
 		<BodyComponent x="950" y="700" bodyType="kinematic"/>
-		<AsteroidComponent speed="15"/>
+		<AsteroidComponent speed="15" level="5"/>
 	</GameObject>
 </Level>
